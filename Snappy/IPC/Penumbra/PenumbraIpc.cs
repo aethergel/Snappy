@@ -203,7 +203,13 @@ public class PenumbraIpc : IDisposable
         if (!Check() || idx == null)
             return;
         var name = "Snap_" + character.Name.TextValue + "_" + idx.Value;
-        var collection = _createTempCollection.Invoke(name);
+        var result = _createTempCollection.Invoke("Snappy", name, out var collection);
+
+        if (result != PenumbraApiEc.Success)
+        {
+            PluginLog.Error($"Failed to create temporary collection: {result}");
+            return;
+        }
         PluginLog.Verbose("Created temp collection: " + collection);
 
         _tempCollectionGuids[idx.Value] = collection;
@@ -214,8 +220,8 @@ public class PenumbraIpc : IDisposable
         foreach (var m in mods)
             PluginLog.Verbose(m.Key + " => " + m.Value);
 
-        var result = _addTempMod.Invoke("Snap", collection, mods, manips, 0);
-        PluginLog.Verbose("Set temp mods result: " + result);
+        var addResult = _addTempMod.Invoke("Snap", collection, mods, manips, 0);
+        PluginLog.Verbose("Set temp mods result: " + addResult);
     }
 
     public string ResolvePath(string path)
@@ -710,9 +716,12 @@ public class PenumbraIpc : IDisposable
 
         // Create and apply the merged temporary collection
         var name = "Snap_" + character.Name.TextValue + "_" + idx.Value + "_Merged";
-        var tempCollection = _createTempCollection.Invoke(name);
-        PluginLog.Debug($"Created merged temporary collection: {tempCollection}");
 
+        // Invoke returns PenumbraApiEc (status), and gives Guid through 'out'
+        var resultCode = _createTempCollection.Invoke("Snappy", name, out var tempCollection);
+        PluginLog.Debug($"Created merged temporary collection {tempCollection} with result {resultCode}");
+
+        // Store the GUID
         _tempCollectionGuids[idx.Value] = tempCollection;
 
         // Assign the temporary collection to the actor
