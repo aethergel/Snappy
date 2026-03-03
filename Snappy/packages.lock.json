@@ -16,9 +16,9 @@
       },
       "ECommons": {
         "type": "Direct",
-        "requested": "[3.1.0.22, )",
-        "resolved": "3.1.0.22",
-        "contentHash": "Ca11yUT35iPCTnlhSePNublOxLQJIt1dU8c1xwMwNFipDt2Bkl5geyl+ScQoJQAGv8C3rvdjGVfhtFXACQWpsQ=="
+        "requested": "[3.1.0.27, )",
+        "resolved": "3.1.0.27",
+        "contentHash": "PkA+aVOf+fHaxxpWM8jZCwBVX3TvNY+rJd7amKYZuVdeF7qpR2jPs0ZYQMejeIY4jUOdRKhaGErqq3ZV9HXZjg=="
       },
       "lz4net": {
         "type": "Direct",
@@ -195,7 +195,7 @@
         "dependencies": {
           "EmbedIO": "[3.5.2, )",
           "PeNet": "[5.1.0, )",
-          "Penumbra.Api": "[5.14.0, )",
+          "Penumbra.Api": "[5.15.0, )",
           "Penumbra.CrashHandler": "[1.0.0, )",
           "Penumbra.GameData": "[1.0.0, )",
           "Penumbra.String": "[1.0.7, )",
@@ -217,7 +217,7 @@
           "FlatSharp.Compiler": "[7.9.0, )",
           "FlatSharp.Runtime": "[7.9.0, )",
           "Luna": "[1.0.0, )",
-          "Penumbra.Api": "[5.14.0, )",
+          "Penumbra.Api": "[5.15.0, )",
           "Penumbra.String": "[1.0.7, )"
         }
       },
