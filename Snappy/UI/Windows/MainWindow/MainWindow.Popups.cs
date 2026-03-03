@@ -112,7 +112,7 @@ public partial class MainWindow
                 var enterPressed = Im.Input.Text(
                     "##SourceActorName"u8,
                     ref _tempSourceActorName,
-                    flags: (InputTextFlags)(ImGuiInputTextFlags.EnterReturnsTrue | ImGuiInputTextFlags.AutoSelectAll)
+                    flags: InputTextFlags.EnterReturnsTrue | InputTextFlags.AutoSelectAll
                 );
                 if (ImGui.IsWindowAppearing()) ImGui.SetKeyboardFocusHere(-1);
 

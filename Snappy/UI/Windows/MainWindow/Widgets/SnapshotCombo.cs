@@ -1,10 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using ImSharp;
 using Luna;
 
 namespace Snappy.UI.Windows;
 
 internal sealed class SnapshotCombo(Func<IReadOnlyList<IFileSystemData<Snapshot>>> generator)
-    : SimpleFilterCombo<IFileSystemData<Snapshot>>(SimpleFilterType.Text)
+    : SimpleFilterCombo<IFileSystemData<Snapshot>>(SimpleFilterType.Partwise)
 {
     private readonly Func<IReadOnlyList<IFileSystemData<Snapshot>>> _generator = generator;
     private IFileSystemData<Snapshot>? _selection;
@@ -32,6 +33,12 @@ internal sealed class SnapshotCombo(Func<IReadOnlyList<IFileSystemData<Snapshot>
 
     protected override bool IsSelected(SimpleCacheItem<IFileSystemData<Snapshot>> item, int globalIndex)
         => ReferenceEquals(item.Item, _selection);
+
+    protected override bool DrawMouseWheelHandling([NotNullWhen(true)] out SimpleCacheItem<IFileSystemData<Snapshot>>? ret)
+    {
+        ret = default;
+        return false;
+    }
 
     public bool Draw(string label, string preview, float width)
     {

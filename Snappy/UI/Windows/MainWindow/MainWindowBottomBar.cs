@@ -19,7 +19,7 @@ internal static class MainWindowBottomBar
         Im.Input.Text(
             "##SnapshotsFolder",
             ref workingDirectory,
-            flags: (InputTextFlags)ImGuiInputTextFlags.ReadOnly
+            flags: InputTextFlags.ReadOnly
         );
 
         ImGui.SameLine();

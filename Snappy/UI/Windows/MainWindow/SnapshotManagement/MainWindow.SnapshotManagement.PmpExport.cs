@@ -55,7 +55,7 @@ public partial class MainWindow
         var listHeight = Math.Max(0f, availableHeight - footerHeight);
 
         using (var listRegion = Im.Child.Begin("PmpItemsRegion", new Vector2(0, listHeight), false,
-                   (WindowFlags)ImGuiWindowFlags.NoScrollbar))
+                   WindowFlags.NoScrollbar))
         {
             if (listRegion)
                 DrawPmpCategoryTabs();

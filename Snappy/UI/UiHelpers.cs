@@ -76,7 +76,7 @@ public static class UiHelpers
             if (Im.Input.Text(
                     "##" + id,
                     ref text,
-                    flags: (InputTextFlags)(ImGuiInputTextFlags.EnterReturnsTrue | ImGuiInputTextFlags.AutoSelectAll)
+                    flags: InputTextFlags.EnterReturnsTrue | InputTextFlags.AutoSelectAll
                 ))
                 onCommit();
         }

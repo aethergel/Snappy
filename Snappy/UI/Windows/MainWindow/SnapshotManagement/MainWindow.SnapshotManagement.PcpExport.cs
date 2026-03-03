@@ -9,7 +9,7 @@ public partial class MainWindow
     private void DrawPcpExportTab()
     {
         // Content container (use default styling similar to Penumbra Effective Changes)
-        using var _pcpChild = Im.Child.Begin("PcpExportContent", new Vector2(0, -1), false, (WindowFlags)ImGuiWindowFlags.None);
+        using var _pcpChild = Im.Child.Begin("PcpExportContent", new Vector2(0, -1), false, WindowFlags.None);
         if (!_pcpChild)
             return;
         // Instruction (subtle helper text)
@@ -115,7 +115,7 @@ public partial class MainWindow
             Im.Input.Text(
                 "##PcpPlayerName"u8,
                 ref _pcpPlayerNameOverride,
-                flags: (InputTextFlags)ImGuiInputTextFlags.AutoSelectAll
+                flags: InputTextFlags.AutoSelectAll
             );
             Im.Tooltip.OnHover(
                 "Name written to PCP's character.json Actor.PlayerName. Defaults to snapshot's Source Actor."u8);

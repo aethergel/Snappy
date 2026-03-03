@@ -19,7 +19,7 @@ public partial class MainWindow
             "HistoryList" + type,
             new Vector2(0, -1),
             false,
-            (WindowFlags)ImGuiWindowFlags.HorizontalScrollbar
+            WindowFlags.HorizontalScrollbar
         );
         if (!child)
             return;
@@ -28,15 +28,15 @@ public partial class MainWindow
         using var table = Im.Table.Begin(
             tableId,
             2,
-            (TableFlags)(ImGuiTableFlags.RowBg | ImGuiTableFlags.SizingFixedFit)
+            TableFlags.RowBackground | TableFlags.SizingFixedFit
         );
         if (!table)
             return;
 
-        table.SetupColumn("Description", (TableColumnFlags)ImGuiTableColumnFlags.WidthStretch);
+        table.SetupColumn("Description", TableColumnFlags.WidthStretch);
         table.SetupColumn(
             "Controls",
-            (TableColumnFlags)ImGuiTableColumnFlags.WidthFixed,
+            TableColumnFlags.WidthFixed,
             260f * ImGuiHelpers.GlobalScale
         );
 
