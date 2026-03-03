@@ -95,7 +95,7 @@ public partial class MainWindow
     {
         var name = category == ChangedItemIconFlag.Unknown
             ? "Misc / Unknown"
-            : Encoding.UTF8.GetString(category.ToDescription());
+            : category.ToNameU8().ToString();
         return $"{name} ({count})";
     }
 }
