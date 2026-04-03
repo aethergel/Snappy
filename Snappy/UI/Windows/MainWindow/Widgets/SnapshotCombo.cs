@@ -4,11 +4,17 @@ using Luna;
 
 namespace Snappy.UI.Windows;
 
-internal sealed class SnapshotCombo(Func<IReadOnlyList<IFileSystemData<Snapshot>>> generator)
-    : SimpleFilterCombo<IFileSystemData<Snapshot>>(SimpleFilterType.Partwise)
+internal sealed class SnapshotCombo : SimpleFilterCombo<IFileSystemData<Snapshot>>
 {
-    private readonly Func<IReadOnlyList<IFileSystemData<Snapshot>>> _generator = generator;
+    private readonly Func<IReadOnlyList<IFileSystemData<Snapshot>>> _generator;
     private IFileSystemData<Snapshot>? _selection;
+
+    public SnapshotCombo(Func<IReadOnlyList<IFileSystemData<Snapshot>>> generator)
+        : base(SimpleFilterType.Partwise)
+    {
+        _generator = generator;
+        DirtyCacheOnClosingPopup = true;
+    }
 
     public event Action<IFileSystemData<Snapshot>?, IFileSystemData<Snapshot>?>? SelectionChanged;
 
