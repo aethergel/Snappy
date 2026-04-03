@@ -1,3 +1,5 @@
+using Luna;
+
 namespace Snappy.UI;
 
 public static class UiHelpers
@@ -10,58 +12,20 @@ public static class UiHelpers
         float? fixedWidth = null
     )
     {
-        var innerSpacing = ImGui.GetStyle().ItemInnerSpacing.X;
-        Vector2 iconSize;
-        using (var font = ImRaii.PushFont(UiBuilder.IconFont))
-        {
-            iconSize = Im.Font.CalculateSize(icon.ToIconString());
-        }
-
         var textSize = Im.Font.CalculateSize(text);
         var framePadding = ImGui.GetStyle().FramePadding;
 
-        var contentMaxHeight = Math.Max(iconSize.Y, textSize.Y);
+        var contentMaxHeight = Math.Max(icon.CalculateSize().Y, textSize.Y);
         var buttonHeight =
             contentMaxHeight + framePadding.Y * 2 + 8f * ImGuiHelpers.GlobalScale;
-        var buttonSize = new Vector2(fixedWidth ?? -1, buttonHeight);
-
-        var result = false;
-        var buttonId = $"##{icon}{text}_stretched";
-        using (var d = ImRaii.Disabled(disabled))
+        var buttonWidth = fixedWidth ?? ImGui.GetContentRegionAvail().X;
+        var config = new ImEx.ButtonConfiguration
         {
-            result = Im.Button(buttonId, buttonSize);
-        }
+            Size = new Vector2(buttonWidth, buttonHeight),
+            Disabled = disabled,
+        };
 
-        Im.Tooltip.OnHover(HoveredFlags.AllowWhenDisabled, tooltip);
-
-        var drawList = ImGui.GetWindowDrawList();
-        var buttonRectMin = ImGui.GetItemRectMin();
-        var buttonRectMax = ImGui.GetItemRectMax();
-        var textColor = ImGui.GetColorU32(disabled ? ImGuiCol.TextDisabled : ImGuiCol.Text);
-
-        var totalContentWidth = iconSize.X + innerSpacing + textSize.X;
-        var contentStartX =
-            buttonRectMin.X + (buttonRectMax.X - buttonRectMin.X - totalContentWidth) / 2;
-
-        var iconStartY = buttonRectMin.Y + (buttonHeight - iconSize.Y) / 2;
-        var textStartY = buttonRectMin.Y + (buttonHeight - textSize.Y) / 2;
-
-        using (var font = ImRaii.PushFont(UiBuilder.IconFont))
-        {
-            drawList.AddText(
-                new Vector2(contentStartX, iconStartY),
-                textColor,
-                icon.ToIconString()
-            );
-        }
-
-        drawList.AddText(
-            new Vector2(contentStartX + iconSize.X + innerSpacing, textStartY),
-            textColor,
-            text
-        );
-
-        return result && !disabled;
+        return ImEx.Icon.LabeledButton(icon.Icon(), text, tooltip, in config);
     }
 
     public static void DrawInlineRename(string id, ref string text, Action onCommit, Action onCancel)
