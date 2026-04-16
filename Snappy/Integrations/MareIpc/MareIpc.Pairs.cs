@@ -59,6 +59,10 @@ public sealed partial class MareIpc
         foreach (var pair in EnumeratePairsFromResult(InvokePairManagerMethod(pairManager, "GetAllPairObjects")))
             yield return pair;
 
+        // Newer Lightless builds expose a direct pair enumeration API instead of the older Mare methods above.
+        foreach (var pair in EnumeratePairsFromResult(InvokePairManagerMethod(pairManager, "EnumeratePairs")))
+            yield return pair;
+
         foreach (var pair in EnumeratePairsFromResult(GetAllClientPairsField(pairManager, pluginInfo.PluginName)))
             yield return pair;
     }
@@ -116,12 +120,14 @@ public sealed partial class MareIpc
     {
         try
         {
-            return pairManager.GetFoP("_allClientPairs");
+            var field = pairManager.GetType().GetField("_allClientPairs",
+                BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+            return field?.GetValue(pairManager);
         }
         catch (Exception e)
         {
-            PluginLog.Error(
-                $"An exception occurred while reflecting into {pluginName} to get client pairs.\n{e}");
+            PluginLog.Debug(
+                $"[Mare IPC] Failed to inspect _allClientPairs for {pluginName}: {e.Message}");
             return null;
         }
     }
