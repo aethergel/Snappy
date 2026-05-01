@@ -27,13 +27,12 @@ public sealed partial class Snappy : IDalamudPlugin
     {
         ECommonsMain.Init(pluginInterface, this, Module.DalamudReflector);
 
-        Log = new Luna.Logger();
+        Log = new Luna.MainLogger(Name);
         _imSharpContext = new Luna.ImSharpDalamudContext(
             Svc.PluginInterface,
             Svc.PluginInterface.UiBuilder,
             Svc.Framework,
-            Log,
-            EmptyServiceProvider.Instance
+            Log
         );
 
         EzConfig.Migrate<Configuration>();
@@ -88,7 +87,7 @@ public sealed partial class Snappy : IDalamudPlugin
 
     public string Name => "Snappy";
 
-    public Luna.Logger Log { get; }
+    public Luna.LunaLogger Log { get; }
 
     public Configuration Configuration { get; }
     public WindowSystem WindowSystem { get; } = new("Snappy");
@@ -136,11 +135,4 @@ public sealed partial class Snappy : IDalamudPlugin
         MainWindow.ClearActorSelection();
     }
 
-    private sealed class EmptyServiceProvider : IServiceProvider
-    {
-        public static readonly EmptyServiceProvider Instance = new();
-
-        public object? GetService(Type serviceType)
-            => null;
-    }
 }

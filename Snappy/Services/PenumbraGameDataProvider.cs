@@ -8,13 +8,13 @@ namespace Snappy.Services;
 
 public sealed class PenumbraGameDataProvider : IDisposable
 {
-    private readonly Logger _log;
+    private readonly LunaLogger _log;
     private readonly object _initLock = new();
     private ObjectIdentification? _identifier;
     private ItemData? _itemData;
     private readonly List<IDisposable> _disposables = new();
 
-    public PenumbraGameDataProvider(Logger log)
+    public PenumbraGameDataProvider(LunaLogger log)
     {
         _log = log;
     }

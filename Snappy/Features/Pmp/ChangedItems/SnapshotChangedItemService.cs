@@ -18,7 +18,7 @@ public sealed partial class SnapshotChangedItemService : ISnapshotChangedItemSer
     private static readonly HashSet<ChangedItemIconFlag> AlwaysIncludeCategories = BuildAlwaysIncludeCategories();
     private readonly PenumbraGameDataProvider _gameDataProvider;
 
-    public SnapshotChangedItemService(Logger log)
+    public SnapshotChangedItemService(LunaLogger log)
     {
         _gameDataProvider = new PenumbraGameDataProvider(log);
     }

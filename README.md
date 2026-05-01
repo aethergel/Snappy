@@ -42,14 +42,7 @@ Add this custom repo to Dalamud:
 https://github.com/BeSlightly/Snappy/raw/refs/heads/master/repo.json
 ```
 
-### Legacy Version (0.2)
-The old version (0.2) is still available on the `0.2.0-dev` branch.
-*   ⚠️ Migrated Snapshots will not be compatible with that version.
-*   ⚠️ This version will eventually stop functioning.
 
-```
-https://github.com/BeSlightly/Snappy/raw/refs/heads/0.2.0-dev/repo.json
-```
 
 ---
 

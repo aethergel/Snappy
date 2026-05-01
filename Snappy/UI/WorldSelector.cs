@@ -198,7 +198,7 @@ public class WorldSelector
         {
             regions[region] = new Dictionary<uint, List<uint>>();
             foreach (var dc in Svc.Data.GetExcelSheet<WorldDCGroupType>()!)
-                if (dc.Region == (byte)region)
+                if (dc.Region.RowId == (uint)region)
                 {
                     regions[region][dc.RowId] = new List<uint>();
                     foreach (var world in ExcelWorldHelper.GetPublicWorlds(dc.RowId))

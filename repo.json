@@ -14,8 +14,8 @@
       "mare",
       "snapshot"
     ],
-    "DalamudApiLevel": 14,
-    "TestingDalamudApiLevel": 14,
+    "DalamudApiLevel": 15,
+    "TestingDalamudApiLevel": 15,
     "LoadRequiredState": 0,
     "LoadSync": false,
     "CanUnloadAsync": false,
