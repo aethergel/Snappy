@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Reflection;
+using Dalamud.Plugin.Ipc;
 
 namespace Snappy.Integrations;
 
@@ -33,16 +34,8 @@ public sealed partial class MareIpc
 
         RefreshPluginAvailability();
 
-        if (_lightlessSyncHandledAddresses?.HasFunction == true)
-            try
-            {
-                var addresses = _lightlessSyncHandledAddresses.InvokeFunc();
-                foreach (var addr in addresses) pairedAddresses.Add(addr);
-            }
-            catch (Exception ex)
-            {
-                PluginLog.Debug($"Failed to get LightlessSync handled addresses: {ex.Message}");
-            }
+        foreach (var addr in GetCurrentLightlessAddresses())
+            pairedAddresses.Add(addr);
 
         if (_snowcloakSyncHandledAddresses?.HasFunction == true)
             try
@@ -73,20 +66,7 @@ public sealed partial class MareIpc
 
     public bool IsAddressHandledByLightless(nint address)
     {
-        try
-        {
-            if (_lightlessSyncHandledAddresses?.HasFunction == true)
-            {
-                var addresses = _lightlessSyncHandledAddresses.InvokeFunc();
-                return addresses.Contains(address);
-            }
-        }
-        catch (Exception ex)
-        {
-            PluginLog.Debug($"Failed LightlessSync address check: {ex.Message}");
-        }
-
-        return false;
+        return GetCurrentLightlessAddresses().Contains(address);
     }
 
     public bool IsAddressHandledBySnowcloak(nint address)
@@ -130,6 +110,77 @@ public sealed partial class MareIpc
         }
 
         return false;
+    }
+
+    private HashSet<nint> GetCurrentLightlessAddresses()
+    {
+        var handledAddresses = GetHandledAddressesFromIpc(_lightlessSyncHandledAddresses, "LightlessSync");
+        var visibleAddresses = _marePlugins.TryGetValue(LightlessSyncPluginKey, out var lightlessPlugin)
+            ? GetVisiblePairAddressesViaPairs(lightlessPlugin)
+            : null;
+
+        if (visibleAddresses != null)
+        {
+            if (handledAddresses != null)
+                visibleAddresses.IntersectWith(handledAddresses);
+
+            return visibleAddresses;
+        }
+
+        return handledAddresses ?? [];
+    }
+
+    private static HashSet<nint>? GetHandledAddressesFromIpc(ICallGateSubscriber<List<nint>>? subscriber, string pluginName)
+    {
+        if (subscriber?.HasFunction != true)
+            return null;
+
+        try
+        {
+            return subscriber.InvokeFunc().Where(addr => addr != nint.Zero).ToHashSet();
+        }
+        catch (Exception ex)
+        {
+            PluginLog.Debug($"Failed to get {pluginName} handled addresses: {ex.Message}");
+            return null;
+        }
+    }
+
+    private HashSet<nint>? GetVisiblePairAddressesViaPairs(MarePluginInfo pluginInfo)
+    {
+        try
+        {
+            if (!pluginInfo.IsAvailable)
+                return [];
+
+            if (pluginInfo.Plugin == null || pluginInfo.PairManager == null)
+                InitializeAllPlugins();
+
+            if (pluginInfo.PairManager == null)
+                return null;
+
+            var results = new HashSet<nint>();
+            foreach (var pair in EnumeratePairsFromPlugin(pluginInfo))
+            {
+                var pairType = pair.GetType();
+                var isVisibleObj = pairType.GetProperty("IsVisible", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                    ?.GetValue(pair);
+                if (isVisibleObj is not true)
+                    continue;
+
+                var addrObj = pairType.GetProperty("PlayerCharacter", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                    ?.GetValue(pair);
+                if (addrObj is nint addr && addr != nint.Zero)
+                    results.Add(addr);
+            }
+
+            return results;
+        }
+        catch (Exception e)
+        {
+            PluginLog.Debug($"[Mare IPC] Visible pair reflection failed for {pluginInfo.PluginName}: {e.Message}");
+            return null;
+        }
     }
 
     private HashSet<nint> GetPlayerSyncAddressesViaPairs(MarePluginInfo pluginInfo)

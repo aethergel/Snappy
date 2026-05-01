@@ -148,9 +148,24 @@ public partial class MainWindow
             var isSnowcloak = _ipcManager.IsSnowcloakAddress(actor.Address);
             var isLightless = !isSnowcloak && _ipcManager.IsLightlessAddress(actor.Address);
             var isPlayerSync = !isSnowcloak && !isLightless && _ipcManager.IsPlayerSyncAddress(actor.Address);
+            var syncSource = GetSyncSourceLabel(isSnowcloak, isLightless, isPlayerSync);
+            if (syncSource != null)
+                displayName = $"{displayName} ({syncSource})";
 
             _cachedActorRows.Add(new ActorRow(actor, displayName, isSnowcloak, isLightless, isPlayerSync));
         }
+    }
+
+    private static string? GetSyncSourceLabel(bool isSnowcloak, bool isLightless, bool isPlayerSync)
+    {
+        if (isSnowcloak)
+            return "Snowcloak";
+        if (isLightless)
+            return "Lightless";
+        if (isPlayerSync)
+            return "Player Sync";
+
+        return null;
     }
 
     private void RebuildFilteredActorRowsIfNeeded()
