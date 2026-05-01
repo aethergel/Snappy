@@ -176,7 +176,7 @@ public sealed class GlamourerIpc : IpcSubscriber
 
         try
         {
-            if (!DalamudReflector.TryGetDalamudPlugin("Glamourer", out var plugin, false, true))
+            if (!TryGetLoadedPluginInstance("Glamourer", out var plugin))
             {
                 PluginLog.Debug("Glamourer reflection could not find plugin instance.");
                 _reflectionSearched = true;

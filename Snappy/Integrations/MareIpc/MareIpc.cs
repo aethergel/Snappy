@@ -59,7 +59,7 @@ public sealed partial class MareIpc : IpcSubscriber
     {
         if (!_marePlugins.TryGetValue(pluginKey, out var pluginInfo)) return false;
 
-        pluginInfo.IsAvailable = DalamudReflector.TryGetDalamudPlugin(pluginKey, out _, false, true);
+        pluginInfo.IsAvailable = IsPluginLoaded(pluginKey);
         return pluginInfo.IsAvailable;
     }
 
@@ -92,7 +92,7 @@ public sealed partial class MareIpc : IpcSubscriber
 
             if (pluginInfo.Plugin != null) continue; // Already initialized
 
-            if (!DalamudReflector.TryGetDalamudPlugin(pluginName, out var marePlugin, true, true))
+            if (!TryGetLoadedPluginInstance(pluginName, out var marePlugin))
             {
                 pluginInfo.IsAvailable = false;
                 continue;
@@ -100,11 +100,9 @@ public sealed partial class MareIpc : IpcSubscriber
 
             try
             {
-                var host = marePlugin.GetFoP("_host");
-                if (host?.GetFoP("Services") is not IServiceProvider serviceProvider)
+                if (GetPluginServiceProvider(marePlugin) is not { } serviceProvider)
                 {
-                    PluginLog.Warning(
-                        $"[Mare IPC] Could not get Services from _host for {pluginName}. Plugin may still be loading.");
+                    PluginLog.Warning($"[Mare IPC] Could not get Services for {pluginName}. Plugin may still be loading.");
                     pluginInfo.IsAvailable = false;
                     continue;
                 }
@@ -201,6 +199,17 @@ public sealed partial class MareIpc : IpcSubscriber
     private void RefreshPluginAvailability()
     {
         foreach (var (pluginKey, pluginInfo) in _marePlugins)
-            pluginInfo.IsAvailable = DalamudReflector.TryGetDalamudPlugin(pluginKey, out _, false, true);
+            pluginInfo.IsAvailable = IsPluginLoaded(pluginKey);
+    }
+
+    private static IServiceProvider? GetPluginServiceProvider(object plugin)
+    {
+        var host = plugin.GetFoP("_host");
+        if (host?.GetFoP("Services") is IServiceProvider serviceProvider)
+            return serviceProvider;
+
+        var lifecycle = plugin.GetFoP("_lifecycle");
+        host = lifecycle?.GetFoP("_host");
+        return host?.GetFoP("Services") as IServiceProvider;
     }
 }

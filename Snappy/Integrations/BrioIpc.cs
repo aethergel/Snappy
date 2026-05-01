@@ -61,7 +61,7 @@ public sealed class BrioIpc : IpcSubscriber
 
         try
         {
-            if (!DalamudReflector.TryGetDalamudPlugin("Brio", out var brioPlugin, false, true))
+            if (!TryGetLoadedPluginInstance("Brio", out var brioPlugin))
                 return;
 
             var brioAssembly = brioPlugin.GetType().Assembly;

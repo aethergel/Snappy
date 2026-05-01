@@ -244,7 +244,7 @@ public sealed class CustomizePlusIpc : IpcSubscriber
 
         try
         {
-            if (!DalamudReflector.TryGetDalamudPlugin("CustomizePlus", out var plugin, false, true))
+            if (!TryGetLoadedPluginInstance("CustomizePlus", out var plugin))
             {
                 _reflectionSearched = true;
                 return;

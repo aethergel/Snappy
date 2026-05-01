@@ -230,7 +230,7 @@ public sealed class PenumbraIpc : IpcSubscriber
         collectionManager = null;
         penumbraAssembly = null;
 
-        if (!DalamudReflector.TryGetDalamudPlugin("Penumbra", out var plugin, false, true))
+        if (!TryGetLoadedPluginInstance("Penumbra", out var plugin))
             return false;
 
         penumbraAssembly = plugin.GetType().Assembly;
