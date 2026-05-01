@@ -140,6 +140,17 @@ public class IpcManager : IIpcManager, IDisposable
         return _mare.GetFileCachePath(hash);
     }
 
+    public Dictionary<string, bool> GetPluginStatus()
+    {
+        return new Dictionary<string, bool>
+        {
+            { "Penumbra", _penumbra.IsReady() },
+            { "Glamourer", _glamourer.IsReady() },
+            { "CustomizePlus", _customize.IsReady() },
+            { "Brio", _brio.IsReady() }
+        };
+    }
+
     public Dictionary<string, bool> GetMarePluginStatus()
     {
         return _mare.GetMarePluginStatus();

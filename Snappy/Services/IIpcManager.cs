@@ -23,6 +23,7 @@ public interface IIpcManager : IDisposable
     List<ICharacter> GetMarePairedPlayers();
     object? GetCharacterDataFromMare(ICharacter character);
     string? GetMareFileCachePath(string hash);
+    Dictionary<string, bool> GetPluginStatus();
     Dictionary<string, bool> GetMarePluginStatus();
     bool IsMarePairedAddress(nint address);
     bool IsLightlessAddress(nint address);

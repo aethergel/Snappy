@@ -23,7 +23,7 @@ public sealed class ConfigWindow : Window
     {
         SizeConstraints = new WindowSizeConstraints
         {
-            MinimumSize = new Vector2(380, 290) * ImGuiHelpers.GlobalScale,
+            MinimumSize = new Vector2(500, 310) * ImGuiHelpers.GlobalScale,
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
         };
 
@@ -139,7 +139,40 @@ public sealed class ConfigWindow : Window
         );
 
         ImGui.Separator();
-        DrawMarePluginStatus();
+        DrawPluginStatuses();
+    }
+
+    private void DrawPluginStatuses()
+    {
+        if (ImGui.BeginTable("SnappyPluginStatuses", 2, ImGuiTableFlags.SizingStretchSame))
+        {
+            ImGui.TableNextColumn();
+            DrawGeneralPluginStatus();
+
+            ImGui.TableNextColumn();
+            DrawMarePluginStatus();
+
+            ImGui.EndTable();
+        }
+    }
+
+    private void DrawGeneralPluginStatus()
+    {
+        Im.Text("Plugin Status:");
+        ImGui.Indent();
+
+        foreach (var (pluginName, isAvailable) in _ipcManager.GetPluginStatus())
+        {
+            var displayName = pluginName switch
+            {
+                "CustomizePlus" => "Customize+",
+                _ => pluginName
+            };
+
+            DrawPluginStatusRow(displayName, isAvailable);
+        }
+
+        ImGui.Unindent();
     }
 
     private void DrawMarePluginStatus()
@@ -159,27 +192,33 @@ public sealed class ConfigWindow : Window
                 _ => pluginName
             };
 
-            var icon = isAvailable ? FontAwesomeIcon.Check : FontAwesomeIcon.Times;
-            var iconColor = isAvailable ? ImGuiColors.HealerGreen : ImGuiColors.DalamudRed;
             var hasForkColor = MareForkColors.TryGetByPluginName(pluginName, out var forkColor);
-
-            using (ImRaii.PushFont(UiBuilder.IconFont))
-            {
-                using var color = ImRaii.PushColor(ImGuiCol.Text, iconColor);
-                Im.Text(icon.ToIconString());
-            }
-
-            ImGui.SameLine();
-
-            var fallbackColor = ImGui.ColorConvertU32ToFloat4(
-                ImGui.GetColorU32(isAvailable ? ImGuiCol.Text : ImGuiCol.TextDisabled));
             var textColor = hasForkColor
                 ? new Vector4(forkColor.X, forkColor.Y, forkColor.Z, isAvailable ? forkColor.W : 0.4f)
-                : fallbackColor;
-            using var textColorScope = ImRaii.PushColor(ImGuiCol.Text, textColor);
-            Im.Text(displayName);
+                : (Vector4?)null;
+
+            DrawPluginStatusRow(displayName, isAvailable, textColor);
         }
 
         ImGui.Unindent();
+    }
+
+    private static void DrawPluginStatusRow(string displayName, bool isAvailable, Vector4? textColor = null)
+    {
+        var icon = isAvailable ? FontAwesomeIcon.Check : FontAwesomeIcon.Times;
+        var iconColor = isAvailable ? ImGuiColors.HealerGreen : ImGuiColors.DalamudRed;
+
+        using (ImRaii.PushFont(UiBuilder.IconFont))
+        {
+            using var color = ImRaii.PushColor(ImGuiCol.Text, iconColor);
+            Im.Text(icon.ToIconString());
+        }
+
+        ImGui.SameLine();
+
+        var fallbackColor = ImGui.ColorConvertU32ToFloat4(
+            ImGui.GetColorU32(isAvailable ? ImGuiCol.Text : ImGuiCol.TextDisabled));
+        using var textColorScope = ImRaii.PushColor(ImGuiCol.Text, textColor ?? fallbackColor);
+        Im.Text(displayName);
     }
 }
